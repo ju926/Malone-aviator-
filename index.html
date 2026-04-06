@@ -3,375 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Malone Aviator - Betika Style</title>
+<title>Malone Aviator - Login</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Body & Background */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #1a1a1a;
+  font-family: 'Roboto', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(-45deg, #0f0f0f, #1a1a1a, #111, #222);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
   color: white;
+}
+
+@keyframes gradientBG {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
+
+/* Container */
+.container {
+  background: #111;
+  padding: 40px 30px;
+  border-radius: 25px;
+  box-shadow: 0 0 30px #ff9a00;
+  width: 360px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.container:hover {
+  transform: translateY(-5px);
+}
+
+/* Logo & Title */
+#logo {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px auto;
+  display: block;
+}
+h2 {
+  color: #ff9a00;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #ff9a00;
 }
 
 /* Inputs */
 input {
-  padding: 10px;
-  margin: 5px 0;
-  width: 90%;
-  border-radius: 6px;
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 15px;
   border: none;
+  font-size: 16px;
+  outline: none;
+  background: #222;
+  color: white;
+  transition: 0.3s;
+  box-shadow: 0 0 5px #000;
+}
+input:focus {
+  box-shadow: 0 0 10px #ff9a00;
+  background: #1a1a1a;
 }
 
 /* Buttons */
 button {
-  padding: 12px;
-  margin: 5px;
+  width: 100%;
+  padding: 14px;
   border-radius: 25px;
   border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-#auth {
-  text-align: center;
-  padding: 50px;
-}
-
-/* Game container */
-#game {
-  display: none;
-  padding: 10px;
-}
-
-/* Top bar */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #111;
-  padding: 10px 20px;
-  font-weight: bold;
-}
-
-.topbar span {
-  font-size: 16px;
-}
-
-/* Main layout */
-.main {
-  display: flex;
-  flex-direction: row;
-  gap: 15px;
-  padding: 10px;
-}
-
-/* Left panel */
-.left {
-  flex: 2;
-  background: #111;
-  padding: 15px;
-  border-radius: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Multiplier */
-#multiplier {
-  font-size: 70px;
-  color: #ff9a00;
-  text-shadow: 0 0 15px #ff9a00;
-  margin-bottom: 15px;
-}
-
-/* Graph canvas */
-canvas {
-  width: 100%;
-  background: #0f0f0f;
-  border-radius: 10px;
-}
-
-/* Cash Out button */
-.controls {
-  margin-top: 20px;
-  width: 100%;
-}
-#cashOutBtn {
-  width: 100%;
   background: #ff9a00;
   color: white;
-  font-size: 20px;
-  text-shadow: 0 0 10px #ff9a00;
-}
-#cashOutBtn:disabled {
-  background: #555;
-  color: #aaa;
-  text-shadow: none;
-}
-
-/* Right panel */
-.right {
-  flex: 1;
-  background: #111;
-  padding: 15px;
-  border-radius: 15px;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-/* Players panel */
-#players div {
-  margin: 5px 0;
-  padding: 5px 10px;
-  border-radius: 10px;
-  background: #222;
-}
-
-/* Chat */
-#chat {
-  margin-top: 10px;
-  max-height: 150px;
-  overflow-y: auto;
-  font-size: 14px;
-}
-
-/* History */
-.history {
-  background: #111;
-  margin: 15px 0;
-  padding: 10px;
-  border-radius: 10px;
-}
-#history span {
-  display: inline-block;
-  padding: 5px 8px;
-  margin: 3px;
-  border-radius: 5px;
   font-weight: bold;
-  color: white;
+  font-size: 18px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 10px #ff9a00;
 }
-.green { background: #00e676; }
-.red { background: #ff5252; }
+button:hover {
+  background: #ffaa33;
+  box-shadow: 0 0 20px #ffaa33;
+}
 
-@media(max-width:800px){
-  .main { flex-direction: column; }
-  .left, .right { width: 100%; }
+/* Switch Links */
+.switch {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #aaa;
+  cursor: pointer;
+}
+.switch span {
+  color: #ff9a00;
+  text-decoration: underline;
+}
+
+/* Error Messages */
+.error {
+  color: #ff5252;
+  font-size: 14px;
+  margin-top: 5px;
+  height: 18px;
+}
+
+/* Fade Animation */
+.fade {
+  animation: fadeIn 0.5s ease forwards;
+}
+@keyframes fadeIn {
+  from {opacity:0;}
+  to {opacity:1;}
+}
+
+/* Responsive */
+@media(max-width:400px){
+  .container {width: 90%; padding: 30px 20px;}
+  input {padding:12px;}
+  button {padding:12px;}
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="auth">
-  <h2>Login / Register</h2>
-  <input id="username" placeholder="Username"><br>
-  <input id="password" type="password" placeholder="Password"><br>
-  <button onclick="register()">Register</button>
-  <button onclick="login()">Login</button>
-</div>
+<div class="container fade" id="loginContainer">
+  <!-- Logo Section -->
+  <img src="logo.png" alt="Malone Aviator Logo" id="logo">
+  <h2 id="formTitle">Login</h2>
 
-<!-- GAME -->
-<div id="game">
-  <div class="topbar">
-    <span>👤 <span id="user"></span></span>
-    <span>💰 <span id="balance">0</span></span>
-    <button onclick="logout()">Logout</button>
+  <!-- Login Form -->
+  <div id="loginForm">
+    <input type="text" id="loginPhone" placeholder="Kenya Phone Number (10 digits)">
+    <div class="error" id="loginError"></div>
+    <button onclick="login()">Login</button>
+    <div class="switch">Don't have an account? <span onclick="showRegister()">Register</span></div>
   </div>
 
-  <div class="main">
-    <!-- Left panel -->
-    <div class="left">
-      <div id="multiplier">1.00x</div>
-      <canvas id="graph" height="250"></canvas>
-      <div class="controls">
-        <button id="cashOutBtn" disabled>Cash Out</button>
-      </div>
-    </div>
-
-    <!-- Right panel -->
-    <div class="right">
-      <h3>Live Bets</h3>
-      <div id="players"></div>
-      <h3>Chat</h3>
-      <div id="chat"></div>
-    </div>
+  <!-- Registration Form -->
+  <div id="registerForm" style="display:none;">
+    <input type="text" id="firstName" placeholder="First Name">
+    <input type="text" id="secondName" placeholder="Second Name">
+    <input type="text" id="nickname" placeholder="Nickname">
+    <input type="text" id="phone" placeholder="Kenya Phone Number (10 digits)">
+    <div class="error" id="registerError"></div>
+    <button onclick="register()">Register</button>
+    <div class="switch">Already have an account? <span onclick="showLogin()">Login</span></div>
   </div>
 
-  <!-- History -->
-  <div class="history">
-    <h3>Crash History</h3>
-    <div id="history"></div>
-  </div>
+  <!-- Footer -->
+  <div style="margin-top:20px; font-size:12px; color:#aaa;">© 2026 Malone Aviator</div>
 </div>
 
 <script>
-// ===== LOGIN =====
-let currentUser = null;
+// Form switches with fade
+function showRegister() {
+  document.getElementById('loginForm').style.display='none';
+  document.getElementById('registerForm').style.display='block';
+  document.getElementById('formTitle').innerText='Register';
+}
+function showLogin() {
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('registerForm').style.display='none';
+  document.getElementById('formTitle').innerText='Login';
+}
 
+// Registration
 function register() {
-  let user = document.getElementById("username").value;
-  let pass = document.getElementById("password").value;
-  if(!user||!pass) return alert("Fill all fields");
-  if(localStorage.getItem(user)) return alert("User exists");
-  let data = {password: pass, balance:1000};
-  localStorage.setItem(user, JSON.stringify(data));
-  alert("Registered! Login now.");
-}
+  const firstName=document.getElementById('firstName').value.trim();
+  const secondName=document.getElementById('secondName').value.trim();
+  const nickname=document.getElementById('nickname').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const errorDiv=document.getElementById('registerError');
 
-function login() {
-  let user = document.getElementById("username").value;
-  let pass = document.getElementById("password").value;
-  let data = localStorage.getItem(user);
-  if(!data) return alert("User not found");
-  data = JSON.parse(data);
-  if(data.password !== pass) return alert("Wrong password");
-
-  currentUser = user;
-  balance = data.balance;
-
-  document.getElementById("auth").style.display="none";
-  document.getElementById("game").style.display="block";
-  document.getElementById("user").innerText=currentUser;
-  updateBalance();
-
-  autoStartGame();
-}
-
-function logout() {
-  currentUser=null;
-  document.getElementById("auth").style.display="block";
-  document.getElementById("game").style.display="none";
-}
-
-// ===== GAME VARIABLES =====
-let multiplier=1, crashPoint, playing=false, bet=100, cashedOut=false, interval;
-const multiplierText=document.getElementById("multiplier");
-const cashOutBtn=document.getElementById("cashOutBtn");
-const canvas=document.getElementById("graph");
-const ctx=canvas.getContext("2d");
-let x=0;
-
-// ===== MULTIPLAYER SIMULATION =====
-let activePlayers=[];
-function generatePlayers(){
-  const names=["John","Mike","Sarah","Alex","Chris","Emma","Brian","Kevin","James","Linda"];
-  activePlayers=[];
-  names.forEach(name=>{
-    let b=Math.floor(Math.random()*500+50);
-    let c=(Math.random()*5+1.2).toFixed(2);
-    activePlayers.push({name:name,bet:b,cashoutAt:c,cashed:false});
-  });
-  renderPlayers();
-}
-function renderPlayers(){
-  const playersDiv=document.getElementById("players");
-  playersDiv.innerHTML="";
-  activePlayers.forEach(p=>{
-    let div=document.createElement("div");
-    if(!p.cashed) div.innerText=`${p.name} - Bet ${p.bet}`;
-    else {div.innerText=`✅ ${p.name} cashed at ${p.cashoutAt}x`; div.style.color="#00e676";}
-    playersDiv.appendChild(div);
-  });
-}
-
-// ===== CHAT SIMULATION =====
-function addChat(msg){
-  const chatDiv=document.getElementById("chat");
-  let div=document.createElement("div");
-  div.innerText=msg;
-  chatDiv.appendChild(div);
-  chatDiv.scrollTop=chatDiv.scrollHeight;
-}
-setInterval(()=>{
-  let msgs=["Nice win!","I'm going big!","Cash out now!","Boom 💥"];
-  addChat(msgs[Math.floor(Math.random()*msgs.length)]);
-},3000);
-
-// ===== GAME LOGIC =====
-function autoStartGame(){
-  if(playing) return;
-  if(balance<bet) return setTimeout(autoStartGame,1000);
-
-  multiplier=1;
-  crashPoint=Math.random()*8+1.5;
-  playing=true;
-  cashedOut=false;
-
-  balance-=bet;
-  saveBalance();
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.beginPath();
-  ctx.moveTo(0,canvas.height);
-  x=0;
-
-  cashOutBtn.disabled=false;
-
-  generatePlayers();
-
-  interval=setInterval(()=>{
-    multiplier+=0.03;
-    multiplierText.innerText=multiplier.toFixed(2)+"x";
-
-    // Graph glow
-    ctx.lineTo(x,canvas.height-multiplier*10);
-    ctx.strokeStyle="#ff9a00";
-    ctx.lineWidth=2;
-    ctx.shadowBlur=10;
-    ctx.shadowColor="#ff9a00";
-    ctx.stroke();
-    x+=2;
-
-    activePlayers.forEach(p=>{
-      if(!p.cashed && multiplier>=p.cashoutAt){
-        p.cashed=true;
-        addChat(`${p.name} cashed out at ${p.cashoutAt}x`);
-      }
-    });
-    renderPlayers();
-
-    if(multiplier>=crashPoint) endGame(false);
-  },50);
-}
-
-function cashOut(){
-  if(!playing||cashedOut) return;
-  let win=bet*multiplier;
-  balance+=win;
-  cashedOut=true;
-  addChat(`You cashed out at ${multiplier.toFixed(2)}x`);
-  saveBalance();
-  endGame(true);
-}
-
-function endGame(won){
-  clearInterval(interval);
-  playing=false;
-  cashOutBtn.disabled=true;
-
-  let span=document.createElement("span");
-  span.innerText=crashPoint.toFixed(2)+"x ";
-  span.className=crashPoint>2?"green":"red";
-  document.getElementById("history").prepend(span);
-
-  if(!won){
-    multiplierText.innerText="CRASH 💥";
-    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+  if(!firstName || !secondName || !nickname || !phone) {
+    errorDiv.innerText='Please fill all fields';
+    return;
   }
-
-  setTimeout(()=>{generatePlayers(); autoStartGame();},2000);
+  if(!/^\d{10}$/.test(phone)) {
+    errorDiv.innerText='Phone must be 10 digits';
+    return;
+  }
+  if(localStorage.getItem(phone)) {
+    errorDiv.innerText='Phone already registered';
+    return;
+  }
+  const userData={firstName, secondName, nickname, phone, balance:1000};
+  localStorage.setItem(phone, JSON.stringify(userData));
+  alert('Registered successfully! Now login.');
+  showLogin();
+  errorDiv.innerText='';
 }
 
-// ===== BALANCE =====
-function saveBalance(){
-  if(!currentUser) return;
-  let data=JSON.parse(localStorage.getItem(currentUser));
-  data.balance=balance;
-  localStorage.setItem(currentUser, JSON.stringify(data));
-  document.getElementById("balance").innerText=balance.toFixed(2);
-}
-function updateBalance(){document.getElementById("balance").innerText=balance.toFixed(2);}
+// Login
+function login() {
+  const phone=document.getElementById('loginPhone').value.trim();
+  const errorDiv=document.getElementById('loginError');
 
-cashOutBtn.onclick=cashOut;
+  if(!/^\d{10}$/.test(phone)) {
+    errorDiv.innerText='Enter valid 10-digit phone number';
+    return;
+  }
+  const data=localStorage.getItem(phone);
+  if(!data) {
+    errorDiv.innerText='Phone not registered';
+    return;
+  }
+  localStorage.setItem('currentUser', phone);
+  alert('Login successful! Redirecting...');
+  window.location.href='game.html'; // redirect to your Aviator game page
+}
 </script>
+
 </body>
 </html>
