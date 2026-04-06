@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malone Aviator Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ===== BODY ===== */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #0a0a0a;
+  color: white;
+  overflow: hidden;
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #111;
+  box-shadow: 0 0 15px #ff9a00;
+}
+
+.balance {
+  color: #ff9a00;
+}
+
+/* ===== GAME AREA ===== */
+.game {
+  position: relative;
+  height: 65vh;
+}
+
+/* CANVAS GRAPH */
+canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* MULTIPLIER */
+.multiplier {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 40px;
+  color: #ff9a00;
+  text-shadow: 0 0 15px #ff9a00;
+}
+
+/* AIRPLANE */
+.plane {
+  position: absolute;
+  width: 40px;
+  transition: transform 0.1s linear;
+}
+
+/* CONTROLS */
+.controls {
+  text-align: center;
+  padding: 15px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  text-align: center;
+}
+
+button {
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: none;
+  margin: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.bet { background: green; color: white; }
+.cashout { background: red; color: white; }
+
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <div>✈️ Malone Aviator</div>
+  <div>Balance: KES <span id="balance">0</span></div>
+</div>
+
+<div class="game">
+  <canvas id="graph"></canvas>
+  <div class="multiplier" id="multiplier">1.00x</div>
+  <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="plane" id="plane">
+</div>
+
+<div class="controls">
+  <input type="number" id="betAmount" placeholder="Bet">
+  <br>
+  <button class="bet" onclick="bet()">BET</button>
+  <button class="cashout" onclick="cashout()">CASH OUT</button>
+</div>
+
+<script>
+
+/* ===== USER ===== */
+let user = localStorage.getItem("currentUser");
+let data = JSON.parse(localStorage.getItem(user));
+if(!data) location="index.html";
+
+let balance = data.balance;
+document.getElementById("balance").innerText = balance;
+
+/* ===== CANVAS ===== */
+const canvas = document.getElementById("graph");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = canvas.offsetHeight;
+
+/* ===== GAME VARIABLES ===== */
+let multiplier = 1;
+let running = true;
+let betPlaced = false;
+let betAmount = 0;
+let points = [];
+let plane = document.getElementById("plane");
+
+/* ===== START ROUND ===== */
+function startRound(){
+  multiplier = 1;
+  running = true;
+  points = [];
+
+  let crash = Math.random() * 6 + 1;
+
+  let interval = setInterval(()=>{
+    if(!running){
+      clearInterval(interval);
+      return;
+    }
+
+    multiplier += 0.04;
+    document.getElementById("multiplier").innerText = multiplier.toFixed(2)+"x";
+
+    let x = points.length * 5;
+    let y = canvas.height - (multiplier * 40);
+
+    points.push({x,y});
+    drawGraph();
+
+    plane.style.left = x+"px";
+    plane.style.top = y+"px";
+
+    if(multiplier >= crash){
+      running = false;
+      crashEffect(crash);
+
+      if(betPlaced){
+        betPlaced=false;
+      }
+
+      setTimeout(startRound, 2500);
+    }
+
+  }, 100);
+}
+
+/* ===== DRAW GRAPH ===== */
+function drawGraph(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+
+  points.forEach(p=>{
+    ctx.lineTo(p.x, p.y);
+  });
+
+  ctx.strokeStyle="#ff9a00";
+  ctx.lineWidth=3;
+  ctx.stroke();
+}
+
+/* ===== CRASH ===== */
+function crashEffect(crash){
+  document.getElementById("multiplier").innerText = "💥 " + crash.toFixed(2)+"x";
+}
+
+/* ===== BET ===== */
+function bet(){
+  if(betPlaced) return;
+
+  let amount = parseInt(document.getElementById("betAmount").value);
+  if(!amount || amount>balance){
+    alert("Invalid bet");
+    return;
+  }
+
+  betAmount = amount;
+  balance -= amount;
+  updateBalance();
+
+  betPlaced = true;
+}
+
+/* ===== CASHOUT ===== */
+function cashout(){
+  if(!betPlaced || !running) return;
+
+  let win = betAmount * multiplier;
+  balance += Math.floor(win);
+
+  alert("Won KES "+Math.floor(win));
+
+  betPlaced = false;
+  updateBalance();
+}
+
+/* ===== UPDATE ===== */
+function updateBalance(){
+  document.getElementById("balance").innerText = balance;
+  data.balance = balance;
+  localStorage.setItem(user, JSON.stringify(data));
+}
+
+startRound();
+
+</script>
+
+</body>
+</html>
