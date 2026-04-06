@@ -3,138 +3,297 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator Demo</title>
+<title>Malone Aviator</title>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #0b0f1a;
   color: white;
+}
+
+input {
+  padding: 10px;
+  margin: 5px 0;
+  width: 90%;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+#auth {
   text-align: center;
+  padding: 50px;
 }
 
-.container {
-  padding: 20px;
+#game {
+  display: none;
+  padding: 10px;
 }
 
-h1 {
-  color: #ff3c3c;
+/* Top bar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  background: #111827;
+  padding: 10px;
+  align-items: center;
+}
+
+/* Main layout */
+.main {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+}
+
+.left {
+  flex: 2;
+  background: #111827;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.right {
+  flex: 1;
+  background: #111827;
+  padding: 10px;
+  border-radius: 10px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 #multiplier {
   font-size: 60px;
-  margin: 20px 0;
+  text-align: center;
+  color: #00e5ff;
 }
 
 canvas {
-  background: #111827;
+  width: 100%;
+  background: #0f172a;
   border-radius: 10px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
   margin-top: 10px;
 }
 
-button {
-  padding: 15px 30px;
+.history {
+  background: #111827;
   margin: 10px;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
 }
 
-#startBtn {
-  background: #00c853;
-  color: white;
+#history span {
+  margin: 4px;
+  display: inline-block;
 }
 
-#cashOutBtn {
-  background: #ff9800;
-  color: white;
-}
-
-#balance {
-  margin-top: 10px;
-  font-size: 20px;
-}
+.green { color: #00e676; }
+.red { color: #ff5252; }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>Aviator Demo</h1>
+<!-- LOGIN SYSTEM -->
+<div id="auth">
+  <h2>Login / Register</h2>
+  <input id="username" placeholder="Username"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button onclick="register()">Register</button>
+  <button onclick="login()">Login</button>
+</div>
 
-  <div id="multiplier">1.00x</div>
+<!-- GAME CONTAINER -->
+<div id="game">
 
-  <canvas id="graph" width="300" height="200"></canvas>
+  <div class="topbar">
+    <span>👤 <span id="user"></span></span>
+    <span>💰 <span id="balance">0</span></span>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-  <br>
+  <div class="main">
+    <!-- Left: multiplier + graph + controls -->
+    <div class="left">
+      <div id="multiplier">1.00x</div>
+      <canvas id="graph" height="250"></canvas>
+      <div class="controls">
+        <button id="cashOutBtn" disabled>Cash Out</button>
+      </div>
+    </div>
 
-  <button id="startBtn">Start</button>
-  <button id="cashOutBtn" disabled>Cash Out</button>
+    <!-- Right: live players -->
+    <div class="right">
+      <h3>Live Bets</h3>
+      <div id="players"></div>
+      <h3>Chat</h3>
+      <div id="chat"></div>
+    </div>
+  </div>
 
-  <div id="balance">Balance: 1000</div>
+  <!-- Crash History -->
+  <div class="history">
+    <h3>Crash History</h3>
+    <div id="history"></div>
+  </div>
 </div>
 
 <script>
-let multiplier = 1.00;
-let crashPoint = 0;
-let interval;
-let playing = false;
-let balance = 1000;
-let bet = 100;
-let cashedOut = false;
+// ====== LOGIN SYSTEM ======
+let currentUser = null;
 
-const multiplierText = document.getElementById("multiplier");
-const startBtn = document.getElementById("startBtn");
-const cashOutBtn = document.getElementById("cashOutBtn");
-const balanceText = document.getElementById("balance");
+function register() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+  if (!user || !pass) return alert("Fill all fields");
+  if (localStorage.getItem(user)) return alert("User already exists");
 
-const canvas = document.getElementById("graph");
-const ctx = canvas.getContext("2d");
-
-let x = 0;
-
-function drawGraph() {
-  ctx.lineTo(x, canvas.height - multiplier * 10);
-  ctx.strokeStyle = "#00e5ff";
-  ctx.stroke();
-  x += 2;
+  let data = { password: pass, balance: 1000 };
+  localStorage.setItem(user, JSON.stringify(data));
+  alert("Registered! Now login.");
 }
 
-function startGame() {
-  if (playing) return;
+function login() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+  let data = localStorage.getItem(user);
+  if (!data) return alert("User not found");
+  data = JSON.parse(data);
+  if (data.password !== pass) return alert("Wrong password");
 
-  if (balance < bet) {
-    alert("Not enough balance!");
-    return;
-  }
+  currentUser = user;
+  balance = data.balance;
 
-  balance -= bet;
+  document.getElementById("auth").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  document.getElementById("user").innerText = currentUser;
+
   updateBalance();
 
+  // Start auto rounds immediately
+  autoStartGame();
+}
+
+// Logout
+function logout() {
+  currentUser = null;
+  document.getElementById("auth").style.display = "block";
+  document.getElementById("game").style.display = "none";
+}
+
+// ====== GAME VARIABLES ======
+let multiplier = 1;
+let crashPoint;
+let playing = false;
+let bet = 100;
+let cashedOut = false;
+let interval;
+
+const multiplierText = document.getElementById("multiplier");
+const cashOutBtn = document.getElementById("cashOutBtn");
+const canvas = document.getElementById("graph");
+const ctx = canvas.getContext("2d");
+let x = 0;
+
+// ====== MULTIPLAYER SIMULATION ======
+let activePlayers = [];
+
+function generatePlayers() {
+  const names = ["John","Mike","Sarah","Alex","Chris","Emma","Brian","Kevin","James","Linda"];
+  activePlayers = [];
+  names.forEach(name => {
+    let betAmount = Math.floor(Math.random() * 500 + 50);
+    let cashoutAt = (Math.random() * 5 + 1.2).toFixed(2);
+    activePlayers.push({ name, bet: betAmount, cashoutAt, cashed: false });
+  });
+  renderPlayers();
+}
+
+function renderPlayers() {
+  const playersDiv = document.getElementById("players");
+  playersDiv.innerHTML = "";
+  activePlayers.forEach(p => {
+    let div = document.createElement("div");
+    if (!p.cashed) div.innerText = `${p.name} - Bet ${p.bet}`;
+    else { div.innerText = `✅ ${p.name} cashed at ${p.cashoutAt}x`; div.style.color="#00e676"; }
+    playersDiv.appendChild(div);
+  });
+}
+
+// ====== CHAT SIMULATION ======
+function addChat(msg) {
+  const chatDiv = document.getElementById("chat");
+  let div = document.createElement("div");
+  div.innerText = msg;
+  chatDiv.appendChild(div);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
+setInterval(() => {
+  let msgs = ["Nice win!", "I'm going big!", "Cash out now!", "Boom 💥"];
+  addChat(msgs[Math.floor(Math.random()*msgs.length)]);
+}, 3000);
+
+// ====== GAME LOGIC ======
+function autoStartGame() {
+  if (playing) return;
+  if (balance < bet) return setTimeout(autoStartGame, 1000); // retry if low balance
+
+  multiplier = 1;
+  crashPoint = Math.random() * 8 + 1.5;
   playing = true;
   cashedOut = false;
-  multiplier = 1.00;
-  crashPoint = Math.random() * 8 + 1.5;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Deduct bet automatically
+  balance -= bet;
+  saveBalance();
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.beginPath();
-  ctx.moveTo(0, canvas.height);
-
+  ctx.moveTo(0,canvas.height);
   x = 0;
 
   cashOutBtn.disabled = false;
 
+  generatePlayers();
+
   interval = setInterval(() => {
-    multiplier += 0.02;
+    multiplier += 0.03;
     multiplierText.innerText = multiplier.toFixed(2) + "x";
 
-    drawGraph();
+    // Graph line glow
+    ctx.lineTo(x, canvas.height - multiplier * 10);
+    ctx.strokeStyle = "#00e5ff";
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "#00e5ff";
+    ctx.stroke();
+    x += 2;
 
-    if (multiplier >= crashPoint) {
-      endGame(false);
-    }
+    // Players cash out simulation
+    activePlayers.forEach(p => {
+      if (!p.cashed && multiplier >= p.cashoutAt) {
+        p.cashed = true;
+        addChat(`${p.name} cashed out at ${p.cashoutAt}x`);
+      }
+    });
+    renderPlayers();
+
+    if (multiplier >= crashPoint) endGame(false);
 
   }, 50);
 }
@@ -144,9 +303,10 @@ function cashOut() {
 
   let win = bet * multiplier;
   balance += win;
-  updateBalance();
-
   cashedOut = true;
+
+  addChat(`You cashed out at ${multiplier.toFixed(2)}x`);
+  saveBalance();
   endGame(true);
 }
 
@@ -155,18 +315,38 @@ function endGame(won) {
   playing = false;
   cashOutBtn.disabled = true;
 
-  if (!won && !cashedOut) {
+  let span = document.createElement("span");
+  span.innerText = crashPoint.toFixed(2) + "x ";
+  span.className = crashPoint > 2 ? "green" : "red";
+  document.getElementById("history").prepend(span);
+
+  if (!won) {
     multiplierText.innerText = "CRASH 💥";
+    if (navigator.vibrate) navigator.vibrate([200,100,200]);
   }
+
+  // After 2 seconds, start next round automatically
+  setTimeout(() => {
+    generatePlayers();
+    autoStartGame();
+  }, 2000);
+
+  saveBalance();
 }
 
-function updateBalance() {
-  balanceText.innerText = "Balance: " + balance.toFixed(2);
+// ====== BALANCE ======
+function saveBalance() {
+  if (!currentUser) return;
+  let data = JSON.parse(localStorage.getItem(currentUser));
+  data.balance = balance;
+  localStorage.setItem(currentUser, JSON.stringify(data));
+  document.getElementById("balance").innerText = balance.toFixed(2);
 }
 
-startBtn.onclick = startGame;
+function updateBalance() { document.getElementById("balance").innerText = balance.toFixed(2); }
+
+// ====== BUTTONS ======
 cashOutBtn.onclick = cashOut;
 </script>
-
 </body>
 </html>
