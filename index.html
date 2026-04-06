@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Malone Aviator - Login</title>
+<title>Malone Aviator</title>
 
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-/* ================= Body & Background ================= */
+
+/* ===== BODY ===== */
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
@@ -25,89 +25,90 @@ body {
 }
 
 @keyframes gradientBG {
-  0% { background-position:0% 50%; }
-  50% { background-position:100% 50%; }
-  100% { background-position:0% 50%; }
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
 }
 
-/* ================= Container (Glassmorphism) ================= */
+/* ===== PARTICLES CANVAS ===== */
+#particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* ===== CONTAINER ===== */
 .container {
+  position: relative;
+  z-index: 1;
   background: rgba(17,17,17,0.65);
   backdrop-filter: blur(12px);
   border-radius: 30px;
-  box-shadow: 0 0 30px rgba(255,154,0,0.6);
+  box-shadow: 0 0 40px rgba(255,154,0,0.6);
   width: 380px;
   max-width: 90%;
   text-align: center;
   padding: 50px 30px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
+  transition: 0.3s;
 }
 
 .container:hover {
   transform: translateY(-5px);
-  box-shadow: 0 0 50px rgba(255,170,50,0.8);
+  box-shadow: 0 0 60px rgba(255,170,50,0.9);
 }
 
-/* ================= Logo & Title ================= */
+/* ===== LOGO ===== */
 #logo {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  margin: 0 auto 15px auto;
-  display: block;
   box-shadow: 0 0 20px #ff9a00;
-  transition: transform 0.6s ease, box-shadow 0.6s ease;
-  animation: logoPulse 3s infinite alternate;
+  animation: pulse 3s infinite alternate;
 }
 
-@keyframes logoPulse {
-  0% { transform: scale(1); box-shadow: 0 0 15px #ff9a00; }
-  100% { transform: scale(1.05); box-shadow: 0 0 30px #ffaa33; }
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
 }
 
 h2 {
   color: #ff9a00;
-  margin-bottom: 25px;
-  font-weight: 700;
-  font-size: 28px;
   text-shadow: 0 0 15px #ff9a00;
 }
 
-/* ================= Inputs ================= */
+/* ===== INPUT ===== */
 input {
   width: 100%;
-  padding: 14px 20px;
+  padding: 14px;
   margin: 10px 0;
   border-radius: 20px;
   border: none;
-  font-size: 16px;
-  outline: none;
-  background: rgba(34,34,34,0.85);
+  background: #222;
   color: white;
+  outline: none;
   transition: 0.3s;
-  box-shadow: inset 0 0 5px #000;
 }
 
 input:focus {
   box-shadow: 0 0 12px #ff9a00;
-  background: rgba(26,26,26,0.95);
 }
 
-/* ================= Buttons ================= */
+/* ===== BUTTON ===== */
 button {
   width: 100%;
   padding: 14px;
   border-radius: 25px;
   border: none;
-  background: linear-gradient(45deg, #ff9a00, #ffaa33);
+  background: linear-gradient(45deg,#ff9a00,#ffaa33);
   color: white;
-  font-weight: 700;
+  font-weight: bold;
   font-size: 18px;
-  margin-top: 15px;
   cursor: pointer;
+  margin-top: 10px;
   transition: 0.3s;
-  box-shadow: 0 0 15px #ff9a00;
 }
 
 button:hover {
@@ -115,151 +116,144 @@ button:hover {
   box-shadow: 0 0 25px #ffaa33;
 }
 
-/* ================= Switch Links ================= */
+/* ===== SWITCH ===== */
 .switch {
-  margin-top: 15px;
+  margin-top: 10px;
   font-size: 14px;
-  color: #aaa;
-  cursor: pointer;
 }
+
 .switch span {
   color: #ff9a00;
-  text-decoration: underline;
-  transition: color 0.3s;
-}
-.switch span:hover {
-  color: #ffaa33;
+  cursor: pointer;
 }
 
-/* ================= Error Messages ================= */
+/* ===== ERROR ===== */
 .error {
-  color: #ff5252;
-  font-size: 14px;
-  margin-top: 5px;
-  min-height: 18px;
+  color: red;
+  font-size: 13px;
+  height: 18px;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: 0.3s;
 }
 
-/* ================= Fade Animation ================= */
-.fade {
-  animation: fadeIn 0.6s ease forwards;
-}
-@keyframes fadeIn {
-  from {opacity:0;}
-  to {opacity:1;}
-}
-
-/* ================= Responsive ================= */
-@media(max-width:400px){
-  .container { padding: 40px 20px; }
-  input, button { padding: 12px; font-size: 16px; }
-}
 </style>
 </head>
+
 <body>
 
-<div class="container fade" id="loginContainer">
-  <!-- Logo Section -->
-  <img src="logo.png" alt="Malone Aviator Logo" id="logo">
-  <h2 id="formTitle">Login</h2>
+<canvas id="particles"></canvas>
 
-  <!-- Login Form -->
-  <div id="loginForm">
-    <input type="text" id="loginPhone" placeholder="Kenya Phone Number (10 digits)">
-    <div class="error" id="loginError"></div>
-    <button onclick="login()">Login</button>
-    <div class="switch">Don't have an account? <span onclick="showRegister()">Register</span></div>
-  </div>
+<div class="container">
+<img src="logo.png" id="logo">
+<h2 id="title">Login</h2>
 
-  <!-- Registration Form -->
-  <div id="registerForm" style="display:none;">
-    <input type="text" id="firstName" placeholder="First Name">
-    <input type="text" id="secondName" placeholder="Second Name">
-    <input type="text" id="nickname" placeholder="Nickname">
-    <input type="text" id="phone" placeholder="Kenya Phone Number (10 digits)">
-    <div class="error" id="registerError"></div>
-    <button onclick="register()">Register</button>
-    <div class="switch">Already have an account? <span onclick="showLogin()">Login</span></div>
-  </div>
+<div id="loginForm">
+<input type="text" id="loginPhone" placeholder="Kenya Phone (10 digits)">
+<div class="error" id="loginError"></div>
+<button onclick="login()">Login</button>
+<div class="switch">No account? <span onclick="showRegister()">Register</span></div>
+</div>
 
-  <!-- Footer -->
-  <div style="margin-top:20px; font-size:12px; color:#aaa;">© 2026 Malone Aviator</div>
+<div id="registerForm" style="display:none;">
+<input type="text" id="firstName" placeholder="First Name">
+<input type="text" id="secondName" placeholder="Second Name">
+<input type="text" id="nickname" placeholder="Nickname">
+<input type="text" id="phone" placeholder="Kenya Phone (10 digits)">
+<div class="error" id="regError"></div>
+<button onclick="register()">Register</button>
+<div class="switch">Have account? <span onclick="showLogin()">Login</span></div>
+</div>
+
 </div>
 
 <script>
-// ================= Form fade switch =================
-function fadeSwitch(show, hide) {
-  hide.style.opacity = 1;
-  hide.style.transition = "opacity 0.4s";
-  hide.style.opacity = 0;
-  setTimeout(() => {
-    hide.style.display = 'none';
-    show.style.display = 'block';
-    show.style.opacity = 0;
-    setTimeout(() => show.style.opacity = 1, 10);
-  }, 400);
+
+/* ===== SWITCH ===== */
+function showRegister(){
+  document.getElementById("loginForm").style.display="none";
+  document.getElementById("registerForm").style.display="block";
+  document.getElementById("title").innerText="Register";
 }
 
-function showRegister() {
-  fadeSwitch(document.getElementById('registerForm'), document.getElementById('loginForm'));
-  document.getElementById('formTitle').innerText='Register';
-}
-function showLogin() {
-  fadeSwitch(document.getElementById('loginForm'), document.getElementById('registerForm'));
-  document.getElementById('formTitle').innerText='Login';
+function showLogin(){
+  document.getElementById("loginForm").style.display="block";
+  document.getElementById("registerForm").style.display="none";
+  document.getElementById("title").innerText="Login";
 }
 
-// ================= Registration =================
-function register() {
-  const firstName=document.getElementById('firstName').value.trim();
-  const secondName=document.getElementById('secondName').value.trim();
-  const nickname=document.getElementById('nickname').value.trim();
-  let phone=document.getElementById('phone').value.trim();
-  const errorDiv=document.getElementById('registerError');
+/* ===== REGISTER ===== */
+function register(){
+  let f=document.getElementById("firstName").value;
+  let s=document.getElementById("secondName").value;
+  let n=document.getElementById("nickname").value;
+  let p=document.getElementById("phone").value;
+  let e=document.getElementById("regError");
 
-  if(!firstName || !secondName || !nickname || !phone) {
-    errorDiv.innerText='Please fill all fields';
-    errorDiv.style.opacity = 1;
-    return;
+  if(!f||!s||!n||!p){
+    e.innerText="Fill all fields"; e.style.opacity=1; return;
   }
-  if(!/^\d{10}$/.test(phone)) {
-    errorDiv.innerText='Phone must be 10 digits';
-    errorDiv.style.opacity = 1;
-    return;
+  if(!/^\d{10}$/.test(p)){
+    e.innerText="Invalid phone"; e.style.opacity=1; return;
   }
-  if(localStorage.getItem(phone)) {
-    errorDiv.innerText='Phone already registered';
-    errorDiv.style.opacity = 1;
-    return;
+  if(localStorage.getItem(p)){
+    e.innerText="Already registered"; e.style.opacity=1; return;
   }
-  const userData={firstName, secondName, nickname, phone, balance:1000};
-  localStorage.setItem(phone, JSON.stringify(userData));
-  alert('Registered successfully! Now login.');
+
+  localStorage.setItem(p,JSON.stringify({f,s,n,p,balance:1000}));
+  alert("Registered!");
   showLogin();
-  errorDiv.style.opacity = 0;
 }
 
-// ================= Login =================
-function login() {
-  const phone=document.getElementById('loginPhone').value.trim();
-  const errorDiv=document.getElementById('loginError');
+/* ===== LOGIN ===== */
+function login(){
+  let p=document.getElementById("loginPhone").value;
+  let e=document.getElementById("loginError");
 
-  if(!/^\d{10}$/.test(phone)) {
-    errorDiv.innerText='Enter valid 10-digit phone number';
-    errorDiv.style.opacity = 1;
-    return;
+  if(!/^\d{10}$/.test(p)){
+    e.innerText="Invalid phone"; e.style.opacity=1; return;
   }
-  const data=localStorage.getItem(phone);
-  if(!data) {
-    errorDiv.innerText='Phone not registered';
-    errorDiv.style.opacity = 1;
-    return;
+  if(!localStorage.getItem(p)){
+    e.innerText="Not registered"; e.style.opacity=1; return;
   }
-  localStorage.setItem('currentUser', phone);
-  alert('Login successful! Redirecting...');
-  window.location.href='game.html';
+
+  localStorage.setItem("currentUser",p);
+  window.location="game.html";
 }
+
+/* ===== PARTICLES ===== */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+for(let i=0;i<80;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*2,
+    speed:Math.random()*0.5
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#ff9a00";
+
+  particles.forEach(p=>{
+    p.y+=p.speed;
+    if(p.y>canvas.height) p.y=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+
 </script>
 
 </body>
